@@ -329,8 +329,6 @@ export default function Lab1() {
       </a>{" "}
       to get dummy text
       <br />
-      <a id="wd-github" href="https://github.com/akale22/kanbas-react-web-app">Github</a>
-      <br/>
 
     </div>
   );
