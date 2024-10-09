@@ -32,7 +32,7 @@ export default function Profile() {
       <input
         className="form-control mb-2"
         id="wd-dob"
-        value="2000-01-01"
+        value="mm/dd/yyyy"
         type="date"
       />
       <input
