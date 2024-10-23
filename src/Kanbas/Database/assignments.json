@@ -39,7 +39,16 @@
     "dueDate": "2024-10-13",
     "description": "A quiz covering the principles of aerodynamics."
   },
-  { "_id": "A202", "title": "Flow Analysis", "course": "RS102", "points": 100 },
+  {
+    "_id": "A202",
+    "title": "Flow Analysis",
+    "course": "RS102",
+    "points": 100,
+    "availableFrom": "2024-10-07",
+    "availableUntil": "2024-10-21",
+    "dueDate": "2024-10-14",
+    "description": "A quiz covering the principles of aerodynamics."
+  },
   {
     "_id": "A203",
     "title": "Heating Analysis",
