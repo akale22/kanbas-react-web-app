@@ -15,7 +15,7 @@ export default function ModulesControls({
 }) {
   return (
     <div id="wd-modules-controls" className="text-nowrap">
-      <ProtectedContentModification>
+      <ProtectedContentModification role="FACULTY">
         <button
           id="wd-add-module-btn"
           className="btn btn-lg btn-danger me-1 float-end"

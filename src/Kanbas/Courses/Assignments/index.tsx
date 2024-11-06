@@ -56,7 +56,7 @@ export default function Assignments() {
             </div>
           </div>
 
-          <ProtectedContentModification>
+          <ProtectedContentModification role="FACULTY">
             <div className="text-nowrap col-7">
               <Link
                 id="wd-add-assignment"
@@ -126,7 +126,7 @@ export default function Assignments() {
                 </div>
                 <div className="col-1">
                   <LessonControlButtons />
-                  <ProtectedContentModification>
+                  <ProtectedContentModification role="FACULTY">
                     <FaTrash
                       className="text-danger me-2 mt-1 float-end"
                       data-bs-toggle="modal"
@@ -141,9 +141,7 @@ export default function Assignments() {
         </li>
       </ul>
 
-      <DeleteAssignmentModal
-        deletionFunction={handleDelete}
-      />
+      <DeleteAssignmentModal deletionFunction={handleDelete} />
     </div>
   );
 }

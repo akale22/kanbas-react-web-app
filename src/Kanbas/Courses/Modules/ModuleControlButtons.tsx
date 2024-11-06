@@ -15,7 +15,7 @@ export default function ModuleControlButtons({
 }) {
   return (
     <div className="float-end">
-      <ProtectedContentModification>
+      <ProtectedContentModification role="FACULTY">
         <FaPencil
           onClick={() => editModule(moduleId)}
           className="text-primary me-3"
