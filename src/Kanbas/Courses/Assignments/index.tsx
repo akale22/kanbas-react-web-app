@@ -5,12 +5,14 @@ import { IoCaretDown, IoEllipsisVertical } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import { useParams } from "react-router";
-import * as db from "../../Database";
 import ProtectedContentModification from "../../ProtectedContentModification";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments = db.assignments.filter(
+  let { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  assignments = assignments.filter(
     (assignment: any) => assignment.course === cid
   );
 
@@ -45,16 +47,17 @@ export default function Assignments() {
 
           <ProtectedContentModification>
             <div className="text-nowrap col-7">
-              <button
+              <Link
                 id="wd-add-assignment"
                 className="btn btn-lg btn-danger me-1 float-end"
+                to={`/Kanbas/Courses/${cid}/Assignments/newAssignment`}
               >
                 <FaPlus
                   className="position-relative me-2"
                   style={{ bottom: "1px" }}
                 />
                 Assignment
-              </button>
+              </Link>
               <button
                 id="wd-add-assignment-group"
                 className="btn btn-lg btn-secondary me-1 float-end"
