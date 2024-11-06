@@ -1,8 +1,8 @@
 [
   {
     "_id": "123",
-    "username": "test1",
-    "password": "test1",
+    "username": "iron_man",
+    "password": "stark123",
     "firstName": "Tony",
     "lastName": "Stark",
     "email": "tony@stark.com",
