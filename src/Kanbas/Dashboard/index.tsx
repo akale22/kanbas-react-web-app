@@ -21,6 +21,13 @@ export default function Dashboard({
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { enrollments } = db;
 
+  const userCourses = courses.filter((course) =>
+    enrollments.some(
+      (enrollment) =>
+        enrollment.user === currentUser?._id && enrollment.course === course._id
+    )
+  );
+
   return (
     <div id="wd-dashboard" className="ms-4">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -58,7 +65,9 @@ export default function Dashboard({
         />
         <hr />
       </ProtectedContentModification>
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>{" "}
+      <h2 id="wd-dashboard-published">
+        Published Courses ({userCourses.length})
+      </h2>{" "}
       <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4 mb-4">
@@ -74,6 +83,7 @@ export default function Dashboard({
               <div
                 className="wd-dashboard-course col"
                 style={{ width: "300px" }}
+                key={course._id}
               >
                 <div className="card rounded-3 overflow-hidden">
                   <Link

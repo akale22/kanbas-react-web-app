@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addAssignment } from "./reducer";
+import { addAssignment, updateAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();
@@ -9,24 +9,31 @@ export default function AssignmentEditor() {
 
   const { cid, aid } = useParams();
 
-  const [_id, setId] = useState("");
-  const [title, setTitle] = useState("");
-  const [course, setCourse] = useState("");
-  const [points, setPoints] = useState(0);
-  const [availableFrom, setAvailableFrom] = useState("");
-  const [availableUntil, setAvailableUntil] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [description, setDescription] = useState("");
-
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const currAssignment = assignments.find(
     (assignment: any) => assignment._id === aid
   );
 
+  const [_id, setId] = useState(currAssignment?._id || "");
+  const [title, setTitle] = useState(currAssignment?.title || "");
+  const [course, setCourse] = useState(currAssignment?.course || "");
+  const [points, setPoints] = useState(currAssignment?.points || 0);
+  const [availableFrom, setAvailableFrom] = useState(
+    currAssignment?.availableFrom || ""
+  );
+  const [availableUntil, setAvailableUntil] = useState(
+    currAssignment?.availableUntil || ""
+  );
+  const [dueDate, setDueDate] = useState(currAssignment?.dueDate || "");
+  const [description, setDescription] = useState(
+    currAssignment?.description || ""
+  );
+  const isNew = aid === "newAssignment";
+
   const setAssignment = () => {
     const assignment = {
       _id,
-      title: title || "",
+      title,
       course,
       points: points || 100,
       availableFrom: availableFrom || getCurrentDate(),
@@ -34,15 +41,16 @@ export default function AssignmentEditor() {
       dueDate: dueDate || getFutureDate(14),
       description: description || "",
     };
-    console.log(assignment.availableFrom);
-    console.log(assignment.availableUntil);
-    console.log(assignment.dueDate);
-    // setting values for the fields not in assignment editor (id and course)
-    assignment._id = "A" + Math.floor(Math.random() * 100) + 100;
-    assignment.course = cid!;
-    dispatch(addAssignment(assignment));
 
-    assignment.course = cid!;
+    if (isNew) {
+      // setting values for the fields not in assignment editor (id and course)
+      assignment._id = "A" + Math.floor(Math.random() * 100) + 100;
+      assignment.course = cid!;
+      dispatch(addAssignment(assignment));
+    } else {
+      dispatch(updateAssignment(assignment));
+    }
+
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
 
@@ -84,7 +92,7 @@ export default function AssignmentEditor() {
       <input
         className="form-control mb-4"
         id="wd-name"
-        value={currAssignment?.title}
+        value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
 
@@ -94,7 +102,7 @@ export default function AssignmentEditor() {
         rows={10}
         onChange={(e) => setDescription(e.target.value)}
       >
-        {currAssignment?.description}
+        {description}
       </textarea>
 
       <div>
@@ -108,7 +116,7 @@ export default function AssignmentEditor() {
             <input
               className="form-control"
               id="wd-points"
-              value={currAssignment?.points}
+              value={points || 0}
               onChange={(e) => setPoints(parseInt(e.target.value))}
             />
           </div>
@@ -253,7 +261,7 @@ export default function AssignmentEditor() {
                   className="form-control"
                   type="date"
                   id="wd-due-date"
-                  value={currAssignment?.dueDate}
+                  value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                 />
               </div>
@@ -270,7 +278,7 @@ export default function AssignmentEditor() {
                     className="form-control"
                     type="date"
                     id="wd-available-from"
-                    value={currAssignment?.availableFrom}
+                    value={availableFrom}
                     onChange={(e) => setAvailableFrom(e.target.value)}
                   />
                 </div>
@@ -285,7 +293,7 @@ export default function AssignmentEditor() {
                     className="form-control"
                     type="date"
                     id="wd-available-until"
-                    value={currAssignment?.availableUntil}
+                    value={availableUntil}
                     onChange={(e) => setAvailableUntil(e.target.value)}
                   />
                 </div>

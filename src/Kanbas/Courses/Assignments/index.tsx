@@ -110,7 +110,8 @@ export default function Assignments() {
                   <span className="text-danger">Multiple Modules</span> |{" "}
                   <b>Not available until</b>{" "}
                   {formatDate(assignment.availableFrom)} at 12:00am | <b>Due</b>{" "}
-                  {formatDate(assignment.dueDate)} at 11:59pm | 100 pts
+                  {formatDate(assignment.dueDate)} at 11:59pm |{" "}
+                  {assignment.points} pts
                 </div>
                 <div className="col-1">
                   <LessonControlButtons />
