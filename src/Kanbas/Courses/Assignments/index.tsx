@@ -6,6 +6,7 @@ import { FaPlus } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import { useParams } from "react-router";
 import * as db from "../../Database";
+import ProtectedContentModification from "../../ProtectedContentModification";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -14,10 +15,13 @@ export default function Assignments() {
   );
 
   const formatDate = (dateStr: string): string => {
-    const [year, month, day] = dateStr.split('-');
-    const date = new Date(Number(year), Number(month) - 1, Number(day)); 
-    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options); 
+    const [year, month, day] = dateStr.split("-");
+    const date = new Date(Number(year), Number(month) - 1, Number(day));
+    const options: Intl.DateTimeFormatOptions = {
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
   };
 
   return (
@@ -39,28 +43,30 @@ export default function Assignments() {
             </div>
           </div>
 
-          <div className="text-nowrap col-7">
-            <button
-              id="wd-add-assignment"
-              className="btn btn-lg btn-danger me-1 float-end"
-            >
-              <FaPlus
-                className="position-relative me-2"
-                style={{ bottom: "1px" }}
-              />
-              Assignment
-            </button>
-            <button
-              id="wd-add-assignment-group"
-              className="btn btn-lg btn-secondary me-1 float-end"
-            >
-              <FaPlus
-                className="position-relative me-2"
-                style={{ bottom: "1px" }}
-              />
-              Group
-            </button>
-          </div>
+          <ProtectedContentModification>
+            <div className="text-nowrap col-7">
+              <button
+                id="wd-add-assignment"
+                className="btn btn-lg btn-danger me-1 float-end"
+              >
+                <FaPlus
+                  className="position-relative me-2"
+                  style={{ bottom: "1px" }}
+                />
+                Assignment
+              </button>
+              <button
+                id="wd-add-assignment-group"
+                className="btn btn-lg btn-secondary me-1 float-end"
+              >
+                <FaPlus
+                  className="position-relative me-2"
+                  style={{ bottom: "1px" }}
+                />
+                Group
+              </button>
+            </div>
+          </ProtectedContentModification>
         </div>
       </div>
 
@@ -98,8 +104,10 @@ export default function Assignments() {
                       {assignment.title}
                     </a>
                   </h3>
-                  <span className="text-danger">Multiple Modules</span> |  {" "}
-                  <b>Not available until</b> {formatDate(assignment.availableFrom)} at 12:00am | <b>Due</b> {formatDate(assignment.dueDate)} at 11:59pm | 100 pts
+                  <span className="text-danger">Multiple Modules</span> |{" "}
+                  <b>Not available until</b>{" "}
+                  {formatDate(assignment.availableFrom)} at 12:00am | <b>Due</b>{" "}
+                  {formatDate(assignment.dueDate)} at 11:59pm | 100 pts
                 </div>
                 <div className="col-1">
                   <LessonControlButtons />
