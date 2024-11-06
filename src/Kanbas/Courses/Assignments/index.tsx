@@ -2,15 +2,21 @@ import { BsGripVertical, BsPlus } from "react-icons/bs";
 import { SlNotebook } from "react-icons/sl";
 import LessonControlButtons from "../Modules/LessonControlButtons";
 import { IoCaretDown, IoEllipsisVertical } from "react-icons/io5";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import { useParams } from "react-router";
 import ProtectedContentModification from "../../ProtectedContentModification";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import DeleteAssignmentModal from "./DeleteAssignmentModal";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
   const { cid } = useParams();
+  const [assignmentIdToDelete, setAssignmentIdToDelete] = useState("");
+  const dispatch = useDispatch();
+
   let { assignments } = useSelector((state: any) => state.assignmentsReducer);
   assignments = assignments.filter(
     (assignment: any) => assignment.course === cid
@@ -24,6 +30,11 @@ export default function Assignments() {
       day: "numeric",
     };
     return date.toLocaleDateString("en-US", options);
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteAssignment(assignmentIdToDelete));
+    setAssignmentIdToDelete("");
   };
 
   return (
@@ -115,12 +126,24 @@ export default function Assignments() {
                 </div>
                 <div className="col-1">
                   <LessonControlButtons />
+                  <ProtectedContentModification>
+                    <FaTrash
+                      className="text-danger me-2 mt-1 float-end"
+                      data-bs-toggle="modal"
+                      data-bs-target="#wd-delete-assignment-dialog"
+                      onClick={() => setAssignmentIdToDelete(assignment._id)}
+                    />
+                  </ProtectedContentModification>
                 </div>
               </li>
             ))}
           </ul>
         </li>
       </ul>
+
+      <DeleteAssignmentModal
+        deletionFunction={handleDelete}
+      />
     </div>
   );
 }
