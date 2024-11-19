@@ -37,6 +37,8 @@ export default function Assignments() {
     setAssignmentIdToDelete("");
   };
 
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
   return (
     <div id="wd-assignments" className="me-4 ms-4">
       <div id="wd-assignments-controls" className="text-nowrap">
@@ -113,7 +115,11 @@ export default function Assignments() {
                   <h3>
                     <a
                       className="wd-assignment-link text-decoration-none text-dark"
-                      href={`#/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
+                      href={
+                        currentUser.role === "FACULTY"
+                          ? `#/Kanbas/Courses/${cid}/Assignments/${assignment._id}`
+                          : `#/Kanbas/Courses/${cid}/Assignments`
+                      }
                     >
                       {assignment.title}
                     </a>
