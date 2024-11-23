@@ -5,7 +5,7 @@ export default function DeleteAssignmentModal({
 }) {
   return (
     <div
-      id="wd-delete-assignment-modal"
+      id="wd-delete-assignment-dialog"
       className="modal fade"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
