@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ export default function AssignmentEditor() {
   );
   const isNew = aid === "newAssignment";
 
-  const setAssignment = () => {
+  const setAssignment = async () => {
     const assignment = {
       _id,
       title,
@@ -46,8 +48,10 @@ export default function AssignmentEditor() {
       // setting values for the fields not in assignment editor (id and course)
       assignment._id = "A" + Math.floor(Math.random() * 100) + 100;
       assignment.course = cid!;
+      await coursesClient.createAssignmentForCourse(cid!, assignment);
       dispatch(addAssignment(assignment));
     } else {
+      await assignmentsClient.updateAssignment(assignment);
       dispatch(updateAssignment(assignment));
     }
 

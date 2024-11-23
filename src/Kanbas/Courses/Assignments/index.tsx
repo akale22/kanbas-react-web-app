@@ -8,9 +8,11 @@ import { useParams } from "react-router";
 import ProtectedContentModification from "../../ProtectedContentModification";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DeleteAssignmentModal from "./DeleteAssignmentModal";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -32,10 +34,22 @@ export default function Assignments() {
     return date.toLocaleDateString("en-US", options);
   };
 
-  const handleDelete = () => {
+  const fetchAssignments = async () => {
+    const assignments = await coursesClient.findAssignmentsForCourse(
+      cid as string
+    );
+    dispatch(setAssignments(assignments));
+  };
+
+  const handleDelete = async () => {
+    await assignmentsClient.deleteAssignment(assignmentIdToDelete);
     dispatch(deleteAssignment(assignmentIdToDelete));
     setAssignmentIdToDelete("");
   };
+
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
@@ -136,7 +150,7 @@ export default function Assignments() {
                     <FaTrash
                       className="text-danger me-2 mt-1 float-end"
                       data-bs-toggle="modal"
-                      data-bs-target="#wd-delete-assignment-dialog"
+                      data-bs-target="#wd-delete-assignment-modal"
                       onClick={() => setAssignmentIdToDelete(assignment._id)}
                     />
                   </ProtectedContentModification>
