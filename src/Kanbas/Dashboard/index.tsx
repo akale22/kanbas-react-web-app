@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ProtectedContentModification from "../ProtectedContentModification";
-import { addEnrollment, deleteEnrollment } from "../enrollmentsReducer";
-import { useState } from "react";
+import {
+  addEnrollment,
+  deleteEnrollment,
+  setEnrollments,
+} from "../enrollmentsReducer";
+import { useState, useEffect } from "react";
+import * as enrollmentsClient from "./client";
 
 export default function Dashboard({
   courses,
+  userCourses,
   course,
   setCourse,
   addNewCourse,
@@ -13,6 +19,7 @@ export default function Dashboard({
   updateCourse,
 }: {
   courses: any[];
+  userCourses: any[];
   course: any;
   setCourse: (course: any) => void;
   addNewCourse: () => void;
@@ -24,19 +31,23 @@ export default function Dashboard({
   const [showAllCourses, setShowAllCourses] = useState(false);
   const dispatch = useDispatch();
 
-  function enrollInCourse(course: string) {
+  async function enrollInCourse(course: string) {
     const enrollment = {
       user: currentUser?._id,
       course: course,
     };
-    dispatch(addEnrollment(enrollment));
+    const newEnrollment = await enrollmentsClient.enrollUserInCourse(
+      enrollment
+    );
+    dispatch(addEnrollment(newEnrollment));
   }
 
-  function unenrollFromCourse(course: string) {
+  async function unenrollFromCourse(course: string) {
     const enrollment = enrollments.find(
       (enrollment: any) =>
         enrollment.user === currentUser?._id && enrollment.course === course
     );
+    await enrollmentsClient.deleteEnrollment(enrollment._id);
     dispatch(deleteEnrollment(enrollment._id));
   }
 
@@ -46,6 +57,17 @@ export default function Dashboard({
         enrollment.user === currentUser?._id && enrollment.course === course
     );
   }
+
+  const fetchEnrollments = async () => {
+    const enrollments = await enrollmentsClient.getEnrollmentsForUser(
+      currentUser?._id
+    );
+    dispatch(setEnrollments(enrollments));
+  };
+
+  useEffect(() => {
+    fetchEnrollments();
+  }, []);
 
   return (
     <div id="wd-dashboard" className="ms-4">
@@ -99,94 +121,102 @@ export default function Dashboard({
         />
         <hr />
       </ProtectedContentModification>
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>{" "}
+      <h2 id="wd-dashboard-published">
+        Published Courses ({enrollments.length})
+      </h2>{" "}
       <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4 mb-4">
-          {courses.map((course) => {
-            // const isEnrolled = isEnrolledInCourse(course._id);
-            // if (!isEnrolled && !showAllCourses) {
-            //   return <></>;
-            return (
-              <div
-                className="wd-dashboard-course col"
-                style={{ width: "300px" }}
-                key={course._id}
-              >
-                <div className="card rounded-3 overflow-hidden">
-                  <Link
-                    to={
-                      isEnrolledInCourse(course._id)
-                        ? `/Kanbas/Courses/${course._id}/Home`
-                        : "/Kanbas/Dashboard"
-                    }
-                    className="wd-dashboard-course-link text-decoration-none text-dark"
-                  >
-                    <img src="/images/reactjs.jpg" width="100%" height={160} />
-                    <div className="card-body">
-                      <h5 className="wd-dashboard-course-title card-title">
-                        {course.name}{" "}
-                      </h5>
-                      <p
-                        className="wd-dashboard-course-title card-text overflow-y-hidden"
-                        style={{ maxHeight: 100 }}
-                      >
-                        {course.description}{" "}
-                      </p>
-                      <button className="btn btn-primary"> Go </button>
-
-                      <ProtectedContentModification role="FACULTY">
-                        <button
-                          onClick={(event) => {
-                            event.preventDefault();
-                            deleteCourse(course._id);
-                          }}
-                          className="btn btn-danger float-end"
-                          id="wd-delete-course-click"
+          {courses
+            .filter((course) =>
+              showAllCourses ? true : isEnrolledInCourse(course._id)
+            )
+            .map((course) => {
+              return (
+                <div
+                  className="wd-dashboard-course col"
+                  style={{ width: "300px" }}
+                  key={course._id}
+                >
+                  <div className="card rounded-3 overflow-hidden">
+                    <Link
+                      to={
+                        isEnrolledInCourse(course._id)
+                          ? `/Kanbas/Courses/${course._id}/Home`
+                          : "/Kanbas/Dashboard"
+                      }
+                      className="wd-dashboard-course-link text-decoration-none text-dark"
+                    >
+                      <img
+                        src="/images/reactjs.jpg"
+                        width="100%"
+                        height={160}
+                        alt="React Logo"
+                      />
+                      <div className="card-body">
+                        <h5 className="wd-dashboard-course-title card-title">
+                          {course.name}{" "}
+                        </h5>
+                        <p
+                          className="wd-dashboard-course-title card-text overflow-y-hidden"
+                          style={{ maxHeight: 100 }}
                         >
-                          Delete
-                        </button>
+                          {course.description}{" "}
+                        </p>
+                        <button className="btn btn-primary"> Go </button>
 
-                        <button
-                          id="wd-edit-course-click"
-                          onClick={(event) => {
-                            event.preventDefault();
-                            setCourse(course);
-                          }}
-                          className="btn btn-warning me-2 float-end"
-                        >
-                          Edit
-                        </button>
-                      </ProtectedContentModification>
-                      <ProtectedContentModification role="STUDENT">
-                        {isEnrolledInCourse(course._id) ? (
+                        <ProtectedContentModification role="FACULTY">
                           <button
                             onClick={(event) => {
                               event.preventDefault();
-                              unenrollFromCourse(course._id);
+                              deleteCourse(course._id);
                             }}
                             className="btn btn-danger float-end"
+                            id="wd-delete-course-click"
                           >
-                            Unenroll
+                            Delete
                           </button>
-                        ) : (
+
                           <button
+                            id="wd-edit-course-click"
                             onClick={(event) => {
                               event.preventDefault();
-                              enrollInCourse(course._id);
+                              setCourse(course);
                             }}
-                            className="btn btn-success float-end"
+                            className="btn btn-warning me-2 float-end"
                           >
-                            Enroll
+                            Edit
                           </button>
-                        )}
-                      </ProtectedContentModification>
-                    </div>
-                  </Link>
+                        </ProtectedContentModification>
+                        <ProtectedContentModification role="STUDENT">
+                          {isEnrolledInCourse(course._id) ? (
+                            <button
+                              onClick={(event) => {
+                                event.preventDefault();
+                                unenrollFromCourse(course._id);
+                              }}
+                              className="btn btn-danger float-end"
+                            >
+                              Unenroll
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(event) => {
+                                event.preventDefault();
+                                enrollInCourse(course._id);
+                              }}
+                              className="btn btn-success float-end"
+                            >
+                              Enroll
+                            </button>
+                          )}
+                        </ProtectedContentModification>
+                      </div>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </div>
