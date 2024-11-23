@@ -67,7 +67,7 @@ export default function Dashboard({
 
   useEffect(() => {
     fetchEnrollments();
-  }, []);
+  }, [userCourses]);
 
   return (
     <div id="wd-dashboard" className="ms-4">
@@ -127,7 +127,7 @@ export default function Dashboard({
       <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4 mb-4">
-          {courses
+          {userCourses
             .filter((course) =>
               showAllCourses ? true : isEnrolledInCourse(course._id)
             )
