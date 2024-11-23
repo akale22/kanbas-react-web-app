@@ -127,7 +127,7 @@ export default function Dashboard({
       <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4 mb-4">
-          {userCourses
+          {courses
             .filter((course) =>
               showAllCourses ? true : isEnrolledInCourse(course._id)
             )
