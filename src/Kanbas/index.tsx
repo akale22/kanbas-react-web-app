@@ -38,7 +38,7 @@ export default function Kanbas() {
   };
   useEffect(() => {
     fetchCourses();
-  }, [currentUser, userCourses]);
+  }, [currentUser]);
 
   const addNewCourse = async () => {
     const newCourse = await userClient.createCourse(course);
