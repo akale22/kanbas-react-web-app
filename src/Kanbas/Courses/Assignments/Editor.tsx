@@ -16,17 +16,38 @@ export default function AssignmentEditor() {
     (assignment: any) => assignment._id === aid
   );
 
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const getFutureDate = (daysAhead: number) => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + daysAhead);
+    const year = futureDate.getFullYear();
+    const month = String(futureDate.getMonth() + 1).padStart(2, "0");
+    const day = String(futureDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   const [_id, setId] = useState(currAssignment?._id || "");
   const [title, setTitle] = useState(currAssignment?.title || "");
   const [course, setCourse] = useState(currAssignment?.course || "");
   const [points, setPoints] = useState(currAssignment?.points || 0);
   const [availableFrom, setAvailableFrom] = useState(
-    currAssignment?.availableFrom || ""
+    currAssignment?.availableFrom || getCurrentDate()
   );
   const [availableUntil, setAvailableUntil] = useState(
-    currAssignment?.availableUntil || ""
+    currAssignment?.availableUntil || getFutureDate(7)
   );
-  const [dueDate, setDueDate] = useState(currAssignment?.dueDate || "");
+  const [dueDate, setDueDate] = useState(
+    currAssignment?.dueDate || getFutureDate(14)
+  );
   const [description, setDescription] = useState(
     currAssignment?.description || ""
   );
@@ -56,25 +77,6 @@ export default function AssignmentEditor() {
     }
 
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
-  };
-
-  const getCurrentDate = () => {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const day = String(currentDate.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
-
-  const getFutureDate = (daysAhead: number) => {
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + daysAhead);
-    const year = futureDate.getFullYear();
-    const month = String(futureDate.getMonth() + 1).padStart(2, "0");
-    const day = String(futureDate.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
   };
 
   if (currAssignment && _id === "") {
