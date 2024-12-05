@@ -134,11 +134,12 @@ export default function Dashboard({
               >
                 <div className="card rounded-3 overflow-hidden">
                   <Link
-                    to={
-                      isEnrolledInCourse(course._id)
-                        ? `/Kanbas/Courses/${course._id}/Home`
-                        : "/Kanbas/Dashboard"
-                    }
+                    // to={
+                    //   isEnrolledInCourse(course._id)
+                    //     ? `/Kanbas/Courses/${course._id}/Home`
+                    //     : "/Kanbas/Dashboard"
+                    // }
+                    to={`/Kanbas/Courses/${course._id}/Home`}
                     className="wd-dashboard-course-link text-decoration-none text-dark"
                   >
                     <img
