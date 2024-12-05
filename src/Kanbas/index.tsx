@@ -21,7 +21,6 @@ export default function Kanbas() {
     endDate: "2023-12-15",
     description: "New Description",
   });
-  const [userCourses, setUserCourses] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const fetchCourses = async () => {
@@ -29,8 +28,6 @@ export default function Kanbas() {
       if (currentUser) {
         const courses = await courseClient.fetchAllCourses();
         setCourses(courses);
-        const userCourses = await userClient.findMyCourses();
-        setUserCourses(userCourses);
       }
     } catch (error) {
       console.error(error);
@@ -41,19 +38,19 @@ export default function Kanbas() {
   }, [currentUser]);
 
   const addNewCourse = async () => {
-    const newCourse = await userClient.createCourse(course);
-    setUserCourses([...userCourses, newCourse]);
+    const newCourse = await courseClient.createCourse(course);
+    setCourses([...courses, newCourse]);
   };
 
   const deleteCourse = async (courseId: string) => {
     await courseClient.deleteCourse(courseId);
-    setUserCourses(userCourses.filter((course) => course._id !== courseId));
+    setCourses(courses.filter((course) => course._id !== courseId));
   };
 
   const updateCourse = async () => {
     await courseClient.updateCourse(course);
-    setUserCourses(
-      userCourses.map((c) => {
+    setCourses(
+      courses.map((c) => {
         if (c._id === course._id) {
           return course;
         } else {
@@ -76,7 +73,6 @@ export default function Kanbas() {
                 <ProtectedRoute>
                   <Dashboard
                     courses={courses}
-                    userCourses={userCourses}
                     course={course}
                     setCourse={setCourse}
                     addNewCourse={addNewCourse}
@@ -90,7 +86,7 @@ export default function Kanbas() {
               path="/Courses/:cid/*"
               element={
                 <ProtectedRoute>
-                  <Courses userCourses={userCourses} />
+                  <Courses courses={courses}/>
                 </ProtectedRoute>
               }
             />
