@@ -35,13 +35,13 @@ export const createModuleForCourse = async (courseId: string, module: any) => {
 
 // ASSIGNMENTS
 export const findAssignmentsForCourse = async (courseId: string) => {
-    const response = await axios
+    const response = await axiosWithCredentials
         .get(`${COURSES_API}/${courseId}/assignments`);
     return response.data;
 }
 
 export const createAssignmentForCourse = async (courseId: string, assignment: any) => {
-    const response = await axios.post(
+    const response = await axiosWithCredentials.post(
         `${COURSES_API}/${courseId}/assignments`,
         assignment
     );
@@ -51,5 +51,10 @@ export const createAssignmentForCourse = async (courseId: string, assignment: an
 export const createCourse = async (course: any) => {
     const { data } = await axiosWithCredentials.post(COURSES_API, course);
     return data;
+};
+
+export const findUsersForCourse = async (courseId: string) => {
+    const response = await axios.get(`${COURSES_API}/${courseId}/users`);
+    return response.data;
 };
 

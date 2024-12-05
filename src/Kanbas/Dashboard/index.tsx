@@ -71,32 +71,26 @@ export default function Dashboard({
 
   useEffect(() => {
     fetchEnrollments();
-  }, [courses]);
+  }, [enrolling]);
 
   return (
-    <div id="wd-dashboard" className="ms-4">
-      <div className="d-flex justify-content-between align-items-center">
-        <h1 id="wd-dashboard-title" className="m-0">
-          Dashboard
-          <button
-            onClick={() => setEnrolling(!enrolling)}
-            className="float-end btn btn-primary"
-          >
-            {enrolling ? "My Courses" : "All Courses"}
-          </button>
-        </h1>
-        <ProtectedContentModification role="STUDENT">
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              setShowAllCourses(!showAllCourses);
-            }}
-          >
-            Enrollments
-          </button>
-        </ProtectedContentModification>
+    <div id="wd-dashboard">
+      <div className="row">
+        <div className="col">
+          <h1 id="wd-dashboard-title">Dashboard</h1>
+        </div>
+        <div className="col">
+          <ProtectedContentModification role="STUDENT">
+            <button
+              onClick={() => setEnrolling(!enrolling)}
+              className="float-end btn btn-primary"
+            >
+              {enrolling ? "My Courses" : "All Courses"}
+            </button>{" "}
+          </ProtectedContentModification>
+        </div>
+        <hr />
       </div>
-      <hr />
       <ProtectedContentModification role="FACULTY">
         <h5>
           New Course
@@ -146,11 +140,6 @@ export default function Dashboard({
               >
                 <div className="card rounded-3 overflow-hidden">
                   <Link
-                    // to={
-                    //   isEnrolledInCourse(course._id)
-                    //     ? `/Kanbas/Courses/${course._id}/Home`
-                    //     : "/Kanbas/Dashboard"
-                    // }
                     to={`/Kanbas/Courses/${course._id}/Home`}
                     className="wd-dashboard-course-link text-decoration-none text-dark"
                   >
@@ -162,19 +151,6 @@ export default function Dashboard({
                     />
                     <div className="card-body">
                       <h5 className="wd-dashboard-course-title card-title">
-                        {enrolling && (
-                          <button
-                            onClick={(event) => {
-                              event.preventDefault();
-                              updateEnrollment(course._id, !course.enrolled);
-                            }}
-                            className={`btn ${
-                              course.enrolled ? "btn-danger" : "btn-success"
-                            } float-end`}
-                          >
-                            {course.enrolled ? "Unenroll" : "Enroll"}
-                          </button>
-                        )}
                         {course.name}{" "}
                       </h5>
                       <p
@@ -208,29 +184,19 @@ export default function Dashboard({
                           Edit
                         </button>
                       </ProtectedContentModification>
-                      <ProtectedContentModification role="STUDENT">
-                        {isEnrolledInCourse(course._id) ? (
-                          <button
-                            onClick={(event) => {
-                              event.preventDefault();
-                              unenrollFromCourse(course._id);
-                            }}
-                            className="btn btn-danger float-end"
-                          >
-                            Unenroll
-                          </button>
-                        ) : (
-                          <button
-                            onClick={(event) => {
-                              event.preventDefault();
-                              enrollInCourse(course._id);
-                            }}
-                            className="btn btn-success float-end"
-                          >
-                            Enroll
-                          </button>
-                        )}
-                      </ProtectedContentModification>
+                      {enrolling && (
+                        <button
+                          onClick={(event) => {
+                            event.preventDefault();
+                            updateEnrollment(course._id, !course.enrolled);
+                          }}
+                          className={`btn ${
+                            course.enrolled ? "btn-danger" : "btn-success"
+                          } float-end`}
+                        >
+                          {course.enrolled ? "Unenroll" : "Enroll"}
+                        </button>
+                      )}
                     </div>
                   </Link>
                 </div>
