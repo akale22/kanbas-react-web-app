@@ -1,11 +1,88 @@
-import * as db from "../../Database";
-import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const { cid, aid } = useParams();
-  const assignment = db.assignments.find(
+
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const currAssignment = assignments.find(
     (assignment: any) => assignment._id === aid
   );
+
+  const [_id, setId] = useState(currAssignment?._id || "");
+  const [title, setTitle] = useState(currAssignment?.title || "");
+  const [course, setCourse] = useState(currAssignment?.course || "");
+  const [points, setPoints] = useState(currAssignment?.points || 0);
+  const [availableFrom, setAvailableFrom] = useState(
+    currAssignment?.availableFrom || ""
+  );
+  const [availableUntil, setAvailableUntil] = useState(
+    currAssignment?.availableUntil || ""
+  );
+  const [dueDate, setDueDate] = useState(currAssignment?.dueDate || "");
+  const [description, setDescription] = useState(
+    currAssignment?.description || ""
+  );
+  const isNew = aid === "newAssignment";
+
+  const setAssignment = () => {
+    const assignment = {
+      _id,
+      title,
+      course,
+      points: points || 100,
+      availableFrom: availableFrom || getCurrentDate(),
+      availableUntil: availableUntil || getFutureDate(7),
+      dueDate: dueDate || getFutureDate(14),
+      description: description || "",
+    };
+
+    if (isNew) {
+      // setting values for the fields not in assignment editor (id and course)
+      assignment._id = "A" + Math.floor(Math.random() * 100) + 100;
+      assignment.course = cid!;
+      dispatch(addAssignment(assignment));
+    } else {
+      dispatch(updateAssignment(assignment));
+    }
+
+    navigate(`/Kanbas/Courses/${cid}/Assignments`);
+  };
+
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const getFutureDate = (daysAhead: number) => {
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + daysAhead);
+    const year = futureDate.getFullYear();
+    const month = String(futureDate.getMonth() + 1).padStart(2, "0");
+    const day = String(futureDate.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  if (currAssignment && _id === "") {
+    setId(currAssignment._id);
+    setTitle(currAssignment.title);
+    setCourse(currAssignment.course);
+    setPoints(currAssignment.points);
+    setAvailableFrom(currAssignment.availableFrom);
+    setAvailableUntil(currAssignment.availableUntil);
+    setDueDate(currAssignment.dueDate);
+    setDescription(currAssignment.description);
+  }
 
   return (
     <div id="wd-assignments-editor" className="ms-4">
@@ -15,11 +92,17 @@ export default function AssignmentEditor() {
       <input
         className="form-control mb-4"
         id="wd-name"
-        value={assignment?.title}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
       />
 
-      <textarea className="form-control mb-4" id="wd-description" rows={10}>
-        {assignment?.description}
+      <textarea
+        className="form-control mb-4"
+        id="wd-description"
+        rows={10}
+        onChange={(e) => setDescription(e.target.value)}
+      >
+        {description}
       </textarea>
 
       <div>
@@ -33,7 +116,8 @@ export default function AssignmentEditor() {
             <input
               className="form-control"
               id="wd-points"
-              value={assignment?.points}
+              value={points || 0}
+              onChange={(e) => setPoints(parseInt(e.target.value))}
             />
           </div>
         </div>
@@ -177,7 +261,8 @@ export default function AssignmentEditor() {
                   className="form-control"
                   type="date"
                   id="wd-due-date"
-                  value={assignment?.dueDate}
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
                 />
               </div>
 
@@ -193,7 +278,8 @@ export default function AssignmentEditor() {
                     className="form-control"
                     type="date"
                     id="wd-available-from"
-                    value={assignment?.availableFrom}
+                    value={availableFrom}
+                    onChange={(e) => setAvailableFrom(e.target.value)}
                   />
                 </div>
                 <div className="col-6">
@@ -207,7 +293,8 @@ export default function AssignmentEditor() {
                     className="form-control"
                     type="date"
                     id="wd-available-until"
-                    value={assignment?.availableUntil}
+                    value={availableUntil}
+                    onChange={(e) => setAvailableUntil(e.target.value)}
                   />
                 </div>
               </div>
@@ -217,12 +304,9 @@ export default function AssignmentEditor() {
 
         <hr className="col-12" />
         <div className="col-12">
-          <Link
-            to={`/Kanbas/Courses/${cid}/Assignments`}
-            className="btn btn-danger float-end"
-          >
+          <button className="btn btn-danger float-end" onClick={setAssignment}>
             Save
-          </Link>
+          </button>
           <Link
             to={`/Kanbas/Courses/${cid}/Assignments`}
             className="btn btn-secondary float-end me-1"
