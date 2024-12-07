@@ -38,4 +38,4 @@ export default function KanbasNavigation() {
         </Link>
       ))}
     </div>
-);}
+);} 
