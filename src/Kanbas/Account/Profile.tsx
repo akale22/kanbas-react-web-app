@@ -16,6 +16,7 @@ export default function Profile() {
   const fetchProfile = () => {
     if (!currentUser) return navigate("/Kanbas/Account/Signin");
     setProfile(currentUser);
+    console.log("this is the current user", currentUser);
   };
   const signout = async () => {
     await client.signout();
@@ -76,6 +77,7 @@ export default function Profile() {
             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
           />
           <select
+            value={profile.role}
             onChange={(e) => setProfile({ ...profile, role: e.target.value })}
             className="form-control mb-2"
             id="wd-role"
