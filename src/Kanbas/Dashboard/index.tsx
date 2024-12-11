@@ -80,7 +80,6 @@ export default function Dashboard({
           <h1 id="wd-dashboard-title">Dashboard</h1>
         </div>
         <div className="col">
-          ={" "}
           <button
             onClick={() => setEnrolling(!enrolling)}
             className="float-end btn btn-primary"
